@@ -49,6 +49,7 @@
                 android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/dialog_input_category_name_layout"
                     style="@style/TextInputEditTextTheme"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -68,6 +69,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/dialog_input_category_weight_layout"
                     style="@style/TextInputEditTextTheme"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -81,7 +83,7 @@
                         android:id="@+id/dialog_input_category_weight"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="text"
+                        android:inputType="number"
                         android:textColor="@color/white"
                         android:textSize="14sp" />
                 </com.google.android.material.textfield.TextInputLayout>

@@ -1,22 +1,28 @@
-package com.jmyze.gradecalculator.view
+package com.jmyze.gradecalculator.view.courses
 
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.jmyze.gradecalculator.*
+import com.jmyze.gradecalculator.CourseRepository
+import com.jmyze.gradecalculator.CoursesViewModelFactory
+import com.jmyze.gradecalculator.ListColors
+import com.jmyze.gradecalculator.R
+import com.jmyze.gradecalculator.database.CourseDatabase
+import com.jmyze.gradecalculator.database.CourseDatabaseDao
+import com.jmyze.gradecalculator.database.CourseObject
 import com.jmyze.gradecalculator.databinding.FragmentFirstBinding
+import com.jmyze.gradecalculator.recyclerviews.CoursesAdapter
 
 class FirstFragment : Fragment() {
 
@@ -26,13 +32,21 @@ class FirstFragment : Fragment() {
     private lateinit var courseRecyclerView: RecyclerView
     private var courseArrayList: ArrayList<CourseObject> = arrayListOf()
 
-    private val coursesViewModel: CoursesViewModel by activityViewModels()
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = this
+
+        val application = requireNotNull(this.activity).application
+        val courseRepository =
+            CourseRepository(CourseDatabase.getInstance(this.requireContext()).courseDatabaseDao)
+        val viewModelFactory = CoursesViewModelFactory(courseRepository, application)
+//        val coursesViewModel =
+//            ViewModelProvider(this, viewModelFactory).get(CoursesViewModel::class.java)
+
+//        binding.coursesViewModel = coursesViewModel
 
         createCourseRecyclerView()
 
@@ -75,6 +89,7 @@ class FirstFragment : Fragment() {
         dialog.findViewById<Button>(R.id.dialog_add_button).setOnClickListener {
             addCourse(
                 CourseObject(
+                    0,
                     selectedColorID,
                     courseName.text.toString(),
                     0.0,
@@ -108,7 +123,6 @@ class FirstFragment : Fragment() {
         courseRecyclerView.adapter = adapter
         adapter.setOnItemClickListener(object : CoursesAdapter.OnItemClickListener {
             override fun onItemClick(position: Int, courseObject: CourseObject) {
-                coursesViewModel.saveCourse(courseObject)
                 findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
             }
         })

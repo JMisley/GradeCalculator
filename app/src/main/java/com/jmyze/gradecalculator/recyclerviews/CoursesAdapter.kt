@@ -1,4 +1,4 @@
-package com.jmyze.gradecalculator
+package com.jmyze.gradecalculator.recyclerviews
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,6 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
+import com.jmyze.gradecalculator.database.CourseObject
+import com.jmyze.gradecalculator.ListColors
+import com.jmyze.gradecalculator.R
 import com.jmyze.gradecalculator.view.MainActivity
 
 class CoursesAdapter(private var coursesList: ArrayList<CourseObject>) :
@@ -24,6 +27,7 @@ class CoursesAdapter(private var coursesList: ArrayList<CourseObject>) :
                 listener.onItemClick(
                     adapterPosition,
                     CourseObject(
+                        0,
                         ListColors.BLACK.colorID,
                         leftHeader.text.toString(),
                         rightHeader.text.toString().toDouble(),
