@@ -4,22 +4,19 @@ import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.jmyze.gradecalculator.CourseRepository
-import com.jmyze.gradecalculator.CoursesViewModelFactory
-import com.jmyze.gradecalculator.ListColors
-import com.jmyze.gradecalculator.R
+import com.jmyze.gradecalculator.*
 import com.jmyze.gradecalculator.database.CourseDatabase
-import com.jmyze.gradecalculator.database.CourseDatabaseDao
 import com.jmyze.gradecalculator.database.CourseObject
 import com.jmyze.gradecalculator.databinding.FragmentFirstBinding
 import com.jmyze.gradecalculator.recyclerviews.CoursesAdapter
@@ -40,13 +37,12 @@ class FirstFragment : Fragment() {
         binding.lifecycleOwner = this
 
         val application = requireNotNull(this.activity).application
-        val courseRepository =
-            CourseRepository(CourseDatabase.getInstance(this.requireContext()).courseDatabaseDao)
-        val viewModelFactory = CoursesViewModelFactory(courseRepository, application)
-//        val coursesViewModel =
-//            ViewModelProvider(this, viewModelFactory).get(CoursesViewModel::class.java)
+        val dataSource = CourseDatabase.getInstance(application).courseDatabaseDao
+        val viewModelFactory = CoursesViewModelFactory(dataSource, application)
+        val coursesViewModel =
+            ViewModelProvider(this, viewModelFactory).get(CoursesViewModel::class.java)
 
-//        binding.coursesViewModel = coursesViewModel
+        binding.coursesViewModel = coursesViewModel
 
         createCourseRecyclerView()
 
