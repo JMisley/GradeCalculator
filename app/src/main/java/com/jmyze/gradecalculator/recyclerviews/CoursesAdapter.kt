@@ -11,28 +11,27 @@ import com.jmyze.gradecalculator.ListColors
 import com.jmyze.gradecalculator.R
 import com.jmyze.gradecalculator.view.MainActivity
 
-class CoursesAdapter(private var coursesList: ArrayList<CourseObject>) :
+class CoursesAdapter(var coursesList: List<CourseObject>) :
     RecyclerView.Adapter<CoursesAdapter.CoursesViewHolder>() {
 
     inner class CoursesViewHolder(courseView: View, listener: OnItemClickListener) :
         RecyclerView.ViewHolder(courseView) {
         val itemContainer: CardView = courseView.findViewById(R.id.item_container)
-        val leftHeader: TextView = courseView.findViewById(R.id.left_header)
-        val rightHeader: TextView = courseView.findViewById(R.id.right_header)
-        val leftCaption: TextView = courseView.findViewById(R.id.left_caption)
-        val rightCaption: TextView = courseView.findViewById(R.id.right_caption)
+        val courseName: TextView = courseView.findViewById(R.id.left_header)
+        val grade: TextView = courseView.findViewById(R.id.right_header)
+        val instructor: TextView = courseView.findViewById(R.id.left_caption)
+        val courseCode: TextView = courseView.findViewById(R.id.right_caption)
 
         init {
             itemView.setOnClickListener {
                 listener.onItemClick(
                     adapterPosition,
                     CourseObject(
-                        0,
+                        courseName.text.toString(),
                         ListColors.BLACK.colorID,
-                        leftHeader.text.toString(),
-                        rightHeader.text.toString().toDouble(),
-                        leftCaption.text.toString(),
-                        rightCaption.text.toString()
+                        grade.text.toString().toDouble(),
+                        instructor.text.toString(),
+                        courseCode.text.toString()
                     )
                 )
             }
@@ -60,15 +59,15 @@ class CoursesAdapter(private var coursesList: ArrayList<CourseObject>) :
         val grade = currentCourse.gradePercentage.toString()
 
         if (currentCourse.instructor.isBlank())
-            holder.leftCaption.visibility = View.GONE
+            holder.instructor.visibility = View.GONE
         if (currentCourse.courseCode.isBlank())
-            holder.rightCaption.visibility = View.GONE
+            holder.courseCode.visibility = View.GONE
 
         holder.itemContainer.setCardBackgroundColor(MainActivity.intToColor(currentCourse.colorID))
-        holder.leftHeader.text = currentCourse.courseName
-        holder.rightHeader.text = grade
-        holder.leftCaption.text = currentCourse.instructor
-        holder.rightCaption.text = currentCourse.courseCode
+        holder.courseName.text = currentCourse.courseName
+        holder.grade.text = grade
+        holder.instructor.text = currentCourse.instructor
+        holder.courseCode.text = currentCourse.courseCode
     }
 
     override fun getItemCount(): Int {

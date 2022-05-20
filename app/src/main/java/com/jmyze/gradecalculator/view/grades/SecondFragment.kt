@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jmyze.gradecalculator.database.CourseObject
 import com.jmyze.gradecalculator.recyclerviews.CategoriesAdapter
-import com.jmyze.gradecalculator.CoursesViewModel
+import com.jmyze.gradecalculator.database.CoursesViewModel
 import com.jmyze.gradecalculator.R
 import com.jmyze.gradecalculator.databinding.FragmentSecondBinding
 

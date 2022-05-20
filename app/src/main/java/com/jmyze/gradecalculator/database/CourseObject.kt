@@ -6,45 +6,23 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "course_table")
 data class CourseObject(
-    @PrimaryKey(autoGenerate = true)
-    var courseId: Long = 0L,
+    @ColumnInfo(name = "course_name")
+    var courseName: String = "",
 
     @ColumnInfo(name = "color_id")
     var colorID: Int = 0,
 
-    @ColumnInfo(name = "course_name")
-    var courseName: String = "",
-
-    @ColumnInfo(name = "grade")
+    @ColumnInfo(name = "overall_grade")
     var gradePercentage: Double = 0.0,
 
     @ColumnInfo(name = "instructor")
     var instructor: String = "",
 
     @ColumnInfo(name = "course_code")
-    var courseCode: String = ""
+    var courseCode: String = "",
 ) {
-    var gradeCategories: ArrayList<String> = arrayListOf()
-    var categoryWeight: ArrayList<Double> = arrayListOf()
-
-    var grades: HashMap<String, ArrayList<Grade>> = HashMap()
-
-    private fun getCategoryAverage(category: String): Double {
-        var total = 0.0
-        if (grades.containsKey(category)) {
-            for (i in 0 until grades[category]?.size!!)
-                total += grades[category]?.get(i)?.grade!!
-            return total / grades[category]?.size!!
-        }
-        return total
-    }
-
-    fun getClassAverage(): Double {
-        var total = 0.0
-        for (i in 0 until gradeCategories.size)
-            total += getCategoryAverage(gradeCategories[i]) * categoryWeight[i]
-        return total
-    }
+    @PrimaryKey(autoGenerate = true)
+    var id: Int? = null
 }
 
 class Grade {

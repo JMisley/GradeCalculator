@@ -5,32 +5,27 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [CourseObject::class], version = 1, exportSchema = false)
+@Database(entities = [CourseObject::class], version = 3)
 abstract class CourseDatabase : RoomDatabase() {
 
-    abstract val courseDatabaseDao: CourseDatabaseDao
+    abstract fun getCourseDao(): CourseDatabaseDao
 
     companion object {
-
         @Volatile
-        private var INSTANCE: CourseDatabase? = null
+        private var instance: CourseDatabase? = null
+        private val LOCK = Any()
 
-        fun getInstance(context: Context): CourseDatabase {
-            synchronized(this) {
-                var instance = INSTANCE
-
-                if (instance == null) {
-                    instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        CourseDatabase::class.java,
-                        "course_database"
-                    )
-                        .fallbackToDestructiveMigration()
-                        .build()
-                    INSTANCE = instance
-                }
-                return instance
+        operator fun invoke(context: Context) = instance ?: synchronized(LOCK) {
+            instance ?: createDatabase(context).also {
+                instance = it
             }
         }
+
+        private fun createDatabase(context: Context) =
+            Room.databaseBuilder(
+                context.applicationContext,
+                CourseDatabase::class.java,
+                "Course.db"
+            ).build()
     }
 }

@@ -16,8 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jmyze.gradecalculator.*
-import com.jmyze.gradecalculator.database.CourseDatabase
-import com.jmyze.gradecalculator.database.CourseObject
+import com.jmyze.gradecalculator.database.*
 import com.jmyze.gradecalculator.databinding.FragmentFirstBinding
 import com.jmyze.gradecalculator.recyclerviews.CoursesAdapter
 
@@ -29,22 +28,27 @@ class FirstFragment : Fragment() {
     private lateinit var courseRecyclerView: RecyclerView
     private var courseArrayList: ArrayList<CourseObject> = arrayListOf()
 
+    private lateinit var coursesViewModel: CoursesViewModel
+    private lateinit var courseAdapter: CoursesAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
-        binding.lifecycleOwner = this
 
-        val application = requireNotNull(this.activity).application
-        val dataSource = CourseDatabase.getInstance(application).courseDatabaseDao
-        val viewModelFactory = CoursesViewModelFactory(dataSource, application)
-        val coursesViewModel =
-            ViewModelProvider(this, viewModelFactory).get(CoursesViewModel::class.java)
-
-        binding.coursesViewModel = coursesViewModel
-
+        courseAdapter = CoursesAdapter(courseArrayList)
         createCourseRecyclerView()
+
+        val courseRepository = CourseRepository(CourseDatabase(this.requireContext()))
+        val viewModelFactory = CoursesViewModelFactory(courseRepository)
+        coursesViewModel =
+            ViewModelProvider(this, viewModelFactory)[CoursesViewModel::class.java]
+
+        coursesViewModel.getAllCourses().observe(viewLifecycleOwner) {
+            courseAdapter.coursesList = it
+            courseAdapter.notifyItemRangeInserted(0, it.size)
+        }
 
         binding.fab.setOnClickListener {
             openDialog()
@@ -85,9 +89,8 @@ class FirstFragment : Fragment() {
         dialog.findViewById<Button>(R.id.dialog_add_button).setOnClickListener {
             addCourse(
                 CourseObject(
-                    0,
-                    selectedColorID,
                     courseName.text.toString(),
+                    selectedColorID,
                     0.0,
                     courseInstructor.text.toString(),
                     courseCode.text.toString()
@@ -108,16 +111,14 @@ class FirstFragment : Fragment() {
         }
     }
 
-    private val adapter = CoursesAdapter(courseArrayList)
-
     private fun addCourse(course: CourseObject) {
-        courseArrayList.add(course)
-        adapter.notifyItemInserted(courseArrayList.size)
+        coursesViewModel.insert(course)
+        courseAdapter.notifyItemInserted(courseArrayList.size)
     }
 
     private fun getCourseData() {
-        courseRecyclerView.adapter = adapter
-        adapter.setOnItemClickListener(object : CoursesAdapter.OnItemClickListener {
+        courseRecyclerView.adapter = courseAdapter
+        courseAdapter.setOnItemClickListener(object : CoursesAdapter.OnItemClickListener {
             override fun onItemClick(position: Int, courseObject: CourseObject) {
                 findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
             }
